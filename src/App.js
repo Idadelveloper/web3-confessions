@@ -13,7 +13,7 @@ export default function App() {
 
       <div className="dataContainer">
         <div className="header">
-        😈 Confess!!!
+          <h1>😈 Confess!!!</h1>
         </div>
 
         <div className="bio">
@@ -21,7 +21,7 @@ export default function App() {
         </div>
 
         <button className="confessButton" onClick={confess}>
-        I want to confess
+        I want to confess!
         </button>
       </div>
     </div>
