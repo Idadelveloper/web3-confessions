@@ -1,13 +1,17 @@
 import React, {useEffect, useState} from "react";
 import { ethers } from "ethers";
 import './App.css';
+import abi from './utils/Confess.json'
 
 export default function App() {
   /*
   * Just a state variable we use to store our user's public wallet.
   */
   const [currentAccount, setCurrentAccount] = useState("");
-  
+  const contractAddress = "0xd5f08a0ae197482FA808cE84E00E97d940dBD26E";
+  const contractABI = abi.abi;
+
+
   const checkIfWalletIsConnected = async () => {
     try {
       const { ethereum } = window;
@@ -51,6 +55,25 @@ export default function App() {
     }
   }
 
+  const confess = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const confessPortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        let count = await confessPortalContract.getTotalConfessions();
+        console.log("Retrieved total confession count...", count.toNumber());
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error)
+    }
+}
+
   useEffect(() => {
     checkIfWalletIsConnected();
   }, [])
@@ -67,7 +90,7 @@ export default function App() {
         I'm Ida and I want to know something about you that nobody knows. Kinda a secret. Good or Evil. It could be something you've done or something you plan on doing or something you think about someone. A secret you'll take to your grave 😉
         </div>
         <div className="buttons">
-          <button className="confessButton" onClick={null}>
+          <button className="confessButton" onClick={confess}>
           I want to confess!
           </button>
           <button className="confessButton" onClick={connectWallet}>
