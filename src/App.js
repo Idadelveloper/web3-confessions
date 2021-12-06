@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import { ethers } from "ethers";
 import './App.css';
 
@@ -66,13 +66,14 @@ export default function App() {
         <div className="bio">
         I'm Ida and I want to know something about you that nobody knows. Kinda a secret. Good or Evil. It could be something you've done or something you plan on doing or something you think about someone. A secret you'll take to your grave 😉
         </div>
-
-        <button className="confessButton" onClick={null}>
-        I want to confess!
-        </button>
-        <button className="confessButton" onClick={connectWallet}>
-        Connect Wallet
-        </button>
+        <div className="buttons">
+          <button className="confessButton" onClick={null}>
+          I want to confess!
+          </button>
+          <button className="confessButton" onClick={connectWallet}>
+          Connect Wallet
+          </button>
+        </div>
       </div>
     </div>
   );

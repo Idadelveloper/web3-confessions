@@ -50,3 +50,8 @@
     background-color: #E8F0F2;
     color: #950101;
 }
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
