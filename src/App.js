@@ -19,9 +19,6 @@ export default function App() {
         console.log("We have the ethereum object", ethereum);
       }
       
-      /*
-      * Check if we're authorized to access the user's wallet
-      */
       const accounts = await ethereum.request({ method: 'eth_accounts' });
       
       if (accounts.length !== 0) {
@@ -35,6 +32,28 @@ export default function App() {
       console.log(error);
     }
   }
+
+  const connectWallet = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        alert("Get MetaMask!");
+        return;
+      }
+
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+
+      console.log("Connected", accounts[0]);
+      setCurrentAccount(accounts[0]); 
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, [])
   
   return (
     <div className="mainContainer">
@@ -50,6 +69,9 @@ export default function App() {
 
         <button className="confessButton" onClick={null}>
         I want to confess!
+        </button>
+        <button className="confessButton" onClick={connectWallet}>
+        Connect Wallet
         </button>
       </div>
     </div>
