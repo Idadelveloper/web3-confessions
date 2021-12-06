@@ -8,7 +8,7 @@ export default function App() {
   * Just a state variable we use to store our user's public wallet.
   */
   const [currentAccount, setCurrentAccount] = useState("");
-  const contractAddress = "0xd5f08a0ae197482FA808cE84E00E97d940dBD26E";
+  const contractAddress = "0x9e2Cc2a8aB4c50FEbbE1575bba092ca87717Ce86";
   const contractABI = abi.abi;
 
 
