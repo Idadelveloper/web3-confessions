@@ -10,7 +10,7 @@ export default function TextBox({visibility, handleSubmit}) {
                 Confess:
                 <textarea  />
                 </label>
-                <input type="submit" value="Submit" />
+                <input type="submit" value="Submit" onChange={e => this.setMessage({ inputValue: e.target.value })} />
             </form>
         </div>
     )

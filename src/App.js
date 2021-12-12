@@ -16,15 +16,17 @@ export default function App() {
   const [allConfessions, setAllConfessions] = useState([]);
   const contractAddress = "0x9e2Cc2a8aB4c50FEbbE1575bba092ca87717Ce86";
   const contractABI = abi.abi;
+  const [message, setMessage] = useState("")
 
   const getAllConfessions = async () => {
+    const { ethereum } = window;
+    
     try {
-      const { ethereum } = window;
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const confessContract = new ethers.Contract(contractAddress, contractABI, signer);
-        const confessTxn = await confessContract.confess("this is a message");
+        const confessTxn = await confessContract.confess(message, { gasLimit: 300000 });
 
         /*
          * Call the getAllConfessions method from Smart Contract
@@ -57,6 +59,35 @@ export default function App() {
     }
   }
 
+  useEffect(() => {
+    let confessContract;
+
+    const onNewConfess = (from, timestamp, message) => {
+      console.log('NewConfession', from, timestamp, message);
+      setAllConfessions(prevState => [
+        ...prevState,
+        {
+          address: from,
+          timestamp: new Date(timestamp * 1000),
+          message: message,
+        },
+      ]);
+    };
+
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+
+      confessContract = new ethers.Contract(contractAddress, contractABI, signer);
+      confessContract.on('NewConfession', onNewConfess);
+    }
+
+    return () => {
+      if (confessContract) {
+        confessContract.off('NewConfession', onNewConfess);
+      }
+    };
+  }, []);
 
   const checkIfWalletIsConnected = async () => {
     try {
