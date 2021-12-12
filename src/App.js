@@ -2,14 +2,60 @@ import React, {useEffect, useState} from "react";
 import { ethers } from "ethers";
 import './App.css';
 import abi from './utils/Confess.json'
+import TextBox from "./TextBox";
 
 export default function App() {
+  const [showBox, setShowBox] = useState(false);
+  
+
   /*
   * Just a state variable we use to store our user's public wallet.
   */
   const [currentAccount, setCurrentAccount] = useState("");
+
+  const [allConfessions, setAllConfessions] = useState([]);
   const contractAddress = "0x9e2Cc2a8aB4c50FEbbE1575bba092ca87717Ce86";
   const contractABI = abi.abi;
+
+  const getAllConfessions = async () => {
+    try {
+      const { ethereum } = window;
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const confessContract = new ethers.Contract(contractAddress, contractABI, signer);
+        const confessTxn = await confessContract.confess("this is a message");
+
+        /*
+         * Call the getAllConfessions method from Smart Contract
+         */
+        const confessions = await confessContract.getAllConfessions();
+        
+
+        /*
+         * We only need address, timestamp, and message in our UI so let's
+         * pick those out
+         */
+        let confessionsCleaned = [];
+        confessions.forEach(confession => {
+          confessionsCleaned.push({
+            address: confession.confessor,
+            timestamp: new Date(confession.timestamp * 1000),
+            message: confession.message
+          });
+        });
+
+        /*
+         * Store our data in React State
+         */
+        setAllConfessions(confessionsCleaned);
+      } else {
+        console.log("Ethereum object doesn't exist!")
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 
   const checkIfWalletIsConnected = async () => {
@@ -73,7 +119,7 @@ export default function App() {
       console.log(error)
     }
 }
-
+ 
   useEffect(() => {
     checkIfWalletIsConnected();
   }, [])
@@ -89,14 +135,25 @@ export default function App() {
         <div className="bio">
         I'm Ida and I want to know something about you that nobody knows. Kinda a secret. Good or Evil. It could be something you've done or something you plan on doing or something you think about someone. A secret you'll take to your grave 😉
         </div>
+        <TextBox visibility={showBox} handleSubmit={confess}/>
+
+
         <div className="buttons">
-          <button className="confessButton" onClick={confess}>
+          <button className="confessButton" onClick={() => setShowBox(true)}>
           I want to confess!
           </button>
           <button className="confessButton" onClick={connectWallet}>
           Connect Wallet
           </button>
         </div>
+        {allConfessions.map((confession, index) => {
+          return (
+            <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
+              <div>Address: {confession.address}</div>
+              <div>Time: {confession.timestamp.toString()}</div>
+              <div>Message: {confession.message}</div>
+            </div>)
+        })}
       </div>
     </div>
   );
